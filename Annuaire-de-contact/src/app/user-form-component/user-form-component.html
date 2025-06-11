@@ -193,6 +193,18 @@
             <!-- SUBMIT -->
 
     </div>
-    <button type="submit" [disabled]="!formRef.valid" 
-    class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200">Soumettre</button>
+    <button 
+  type="submit" 
+  [disabled]="!formRef.valid || isSubmitting" 
+  class="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-400 text-white font-semibold py-3 px-4 rounded-lg transition duration-200">
+  
+  <span *ngIf="!isSubmitting">
+    {{ donneForm.type === 'entreprise' ? 'Ajouter l\'entreprise' : 'Ajouter l\'intérimaire' }}
+  </span>
+  <span *ngIf="isSubmitting">Ajout en cours...</span>
+</button>
+
+<button type="button" (click)="debugContacts()" class="mt-4 w-full bg-green-600 text-white py-2 rounded">
+  🐛 Debug - Voir tous les contacts
+</button>
 </form>
