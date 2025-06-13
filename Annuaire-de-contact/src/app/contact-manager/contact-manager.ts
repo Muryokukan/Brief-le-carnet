@@ -1,153 +1,97 @@
-import { Component, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { SqliteService, User } from '../services/sqlite.service';
-import { ContactList } from '../contact-list/contact-list';
 
 @Component({
   selector: 'app-contact-manager',
   standalone: true,
-  imports: [FormsModule, CommonModule, ContactList],
+  imports: [CommonModule, FormsModule],
   templateUrl: './contact-manager.html',
-  styleUrls: []
+  styleUrl: './contact-manager.css'
 })
-export class ContactManagerComponent implements OnInit {
+export class ContactManagerComponent {
   contacts: User[] = [];
-  displayedContacts: User[] = [];
-  currentContact: any = {
-    name: '',
-    email: '',
-    phone: ''
-  };
-  
-  isEditing = false;
+  currentContact: Omit<User, 'id' | 'createdAt'> = this.newContactObj();
+  isEditing: boolean = false;
   editingId: number | null = null;
-  searchTerm = '';
-  isLoading = false;
   errorMessage = '';
   successMessage = '';
 
-  constructor(private sqliteService: SqliteService) {}
-
-  async ngOnInit() {
-    await this.initializeDatabase();
-    await this.loadContacts();
-  }
-
-  private async initializeDatabase() {
-    try {
-      await this.sqliteService.initialize();
-    } catch (error: any) {
-      this.errorMessage = 'Erreur d\'initialisation: ' + error.message;
-      console.error('Initialization error:', error);
-    }
+  constructor(private sqliteService: SqliteService) {
+    this.loadContacts();
   }
 
   async loadContacts() {
-    try {
-      this.isLoading = true;
-      this.contacts = await this.sqliteService.getAllContacts();
-      this.displayedContacts = [...this.contacts];
-    } catch (error: any) {
-      this.errorMessage = 'Erreur de chargement: ' + error.message;
-      console.error('Error loading contacts:', error);
-    } finally {
-      this.isLoading = false;
-    }
+    this.contacts = await this.sqliteService.getAllContacts();
   }
 
-  async onSubmit() {
-    if (!this.currentContact['name']?.trim() || !this.currentContact['email']?.trim()) {
-      this.errorMessage = 'Le nom et l\'email sont obligatoires.';
-      return;
-    }
-
+  async submitForm() {
     try {
-      this.isLoading = true;
-      this.clearMessages();
-
-      const contactData = {
-        name: this.currentContact['name'].trim(),
-        email: this.currentContact['email'].trim(),
-        phone: this.currentContact['phone']?.trim() || ''
-      };
-
       if (this.isEditing && this.editingId) {
-        await this.sqliteService.updateContact(this.editingId, contactData);
-        this.successMessage = 'Contact modifié avec succès !';
+        await this.sqliteService.updateContact(this.editingId, this.currentContact);
+        this.successMessage = 'Contact modifié !';
       } else {
-        await this.sqliteService.addContact(contactData);
-        this.successMessage = 'Contact ajouté avec succès !';
+        await this.sqliteService.addContact(this.currentContact);
+        this.successMessage = 'Contact ajouté !';
       }
-
-      await this.loadContacts();
       this.resetForm();
-      this.onSearch();
-
-    } catch (error: any) {
-      this.errorMessage = 'Erreur lors de la sauvegarde: ' + error.message;
-      console.error('Error saving contact:', error);
-    } finally {
-      this.isLoading = false;
+      this.loadContacts();
+    } catch (e) {
+      this.errorMessage = 'Erreur lors de l\'enregistrement';
     }
   }
 
   editContact(contact: User) {
-    this.currentContact = {
-      name: contact.name,
-      email: contact.email,
-      phone: contact.phone || ''
-    };
     this.isEditing = true;
-    this.editingId = contact.id!;
+    this.editingId = contact.id ?? null;
+    this.currentContact = {
+      type: contact.type,
+      nom: contact.nom,
+      prenom: contact.prenom,
+      age: contact.age,
+      telephone: contact.telephone,
+      email: contact.email,
+      adressePostal: contact.adressePostal,
+      codePostal: contact.codePostal,
+      metier: contact.metier,
+      description: contact.description,
+      photo: contact.photo
+    };
+    this.clearMessages();
   }
 
-  async deleteContact(id: number) {
-    if (!confirm('Êtes-vous sûr de vouloir supprimer ce contact ?')) {
-      return;
-    }
-
-    try {
-      this.isLoading = true;
-      await this.sqliteService.deleteContact(id);
-      this.successMessage = 'Contact supprimé avec succès !';
-      await this.loadContacts();
-      this.onSearch();
-    } catch (error: any) {
-      this.errorMessage = 'Erreur lors de la suppression: ' + error.message;
-      console.error('Error deleting contact:', error);
-    } finally {
-      this.isLoading = false;
-    }
-  }
-
-  async onSearch() {
-    if (!this.searchTerm.trim()) {
-      this.displayedContacts = [...this.contacts];
-      return;
-    }
-
-    try {
-      this.displayedContacts = await this.sqliteService.searchContacts(this.searchTerm);
-    } catch (error: any) {
-      this.errorMessage = 'Erreur lors de la recherche: ' + error.message;
-      console.error('Error searching contacts:', error);
-    }
+  async deleteContact(id: number | undefined) {
+    if (!id) return;
+    await this.sqliteService.deleteContact(id);
+    this.loadContacts();
   }
 
   resetForm() {
-    this.currentContact = {
-      name: '',
-      email: '',
-      phone: ''
-    };
+    this.currentContact = this.newContactObj();
     this.isEditing = false;
     this.editingId = null;
     this.clearMessages();
   }
 
-  private clearMessages() {
+  clearMessages() {
     this.errorMessage = '';
     this.successMessage = '';
+  }
+
+  newContactObj(): Omit<User, 'id' | 'createdAt'> {
+    return {
+      type: "interimaire",
+      nom: "",
+      prenom: "",
+      age: undefined,
+      telephone: "",
+      email: "",
+      adressePostal: "",
+      codePostal: "",
+      metier: "",
+      description: "",
+      photo: ""
+    };
   }
 }

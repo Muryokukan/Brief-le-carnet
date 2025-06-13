@@ -5,10 +5,11 @@ import { CardInterimaireComponent } from "../../card-interimaire-component/card-
 import { CardContainerComponent } from "../../card-container-component/card-container-component";
 import { UserFormComponent } from '../../user-form-component/user-form-component';
 import { RouterOutlet } from '@angular/router';
+import { ContactManagerComponent } from '../../contact-manager/contact-manager';
 
 @Component({
   selector: 'app-home-page',
-  imports: [Annuaire, CardContainerComponent, CardEntrepriseComponent, CardInterimaireComponent, UserFormComponent, RouterOutlet],
+  imports: [Annuaire, CardContainerComponent, CardEntrepriseComponent, CardInterimaireComponent, UserFormComponent, RouterOutlet, ContactManagerComponent],
   templateUrl: './home-page.html',
   styleUrl: './home-page.css'
 })

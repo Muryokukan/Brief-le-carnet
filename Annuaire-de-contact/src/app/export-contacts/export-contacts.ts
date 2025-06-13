@@ -3,8 +3,8 @@ import { SqliteService } from '../services/sqlite.service';
 @Component({
   selector: 'app-export-contacts',
   standalone: true,
-  templateUrl: './export-contacts.component.html',
-  styleUrls: ['./export-contacts.component.css']
+  templateUrl: './export-contacts.html',
+  styleUrls: ['./export-contacts.css']
 })
 export class ExportContactsComponent {
   constructor(private sqliteService: SqliteService) {}
