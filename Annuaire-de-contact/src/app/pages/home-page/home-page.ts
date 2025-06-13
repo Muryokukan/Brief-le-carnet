@@ -6,10 +6,11 @@ import { CardContainerComponent } from "../../card-container-component/card-cont
 import { UserFormComponent } from '../../user-form-component/user-form-component';
 import { RouterOutlet } from '@angular/router';
 import { ContactManagerComponent } from '../../contact-manager/contact-manager';
+import { ExportContactsComponent } from '../../export-contacts/export-contacts';
 
 @Component({
   selector: 'app-home-page',
-  imports: [Annuaire, CardContainerComponent, CardEntrepriseComponent, CardInterimaireComponent, UserFormComponent, RouterOutlet, ContactManagerComponent],
+  imports: [Annuaire, CardContainerComponent, CardEntrepriseComponent, CardInterimaireComponent, UserFormComponent, RouterOutlet, ContactManagerComponent, ExportContactsComponent],
   templateUrl: './home-page.html',
   styleUrl: './home-page.css'
 })
