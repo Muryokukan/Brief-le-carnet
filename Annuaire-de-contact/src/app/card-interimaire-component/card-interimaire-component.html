@@ -21,13 +21,13 @@
         <p><strong>Métier : </strong>{{ donneForm.metier}}</p>
     </div>
 
-    <div [hidden]="!isExpanded" class="mt-3 text-sm text-gray-900">
-        <p class="font-semibold mb-1">Description : </p>
-        <p>{{ donneForm.description}}</p>
+        <div [hidden]="!isExpanded" class="mt-3 text-sm text-gray-900">
+        <p><strong>Description :</strong> {{ donneForm.description }}</p>
     </div>
 
     <div class="mt-4">
-        <button (click)="toggleExpanded()" class="text-indigo-800 underline text-sm font-medium">{{ isExpanded ? 'Réduire' : "Plus d'information" }}
+        <button (click)="toggleExpanded()" class="text-indigo-800 underline text-sm font-medium">
+            {{ isExpanded ? 'Réduire' : "Plus d'information" }}
             <span class="inline-block ml-1">▼</span>
         </button>
     </div>

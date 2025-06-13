@@ -18,10 +18,11 @@
         <p><strong>Téléphone : </strong>{{ donneForm.telephone }}</p>
         <p><strong>Adresse : </strong>{{ donneForm.adressePostal }} ({{ donneForm.codePostal }})</p>
         <p><strong>Poste rechercher : </strong>{{ donneForm.metier }}</p>
-        <p><strong>Description entreprise : </strong>{{ donneForm.description }}</p>
+        
     </div>
 
     <div [hidden]="!isExpanded" class="mt-3 text-sm text-gray-900">
+        <p><strong>Description entreprise : </strong>{{ donneForm.description }}</p>
         <p class="font-semibold mb-1">Description du poste : </p>
         <p>{{ donneForm.descriptionPoste }}</p>
     </div>
