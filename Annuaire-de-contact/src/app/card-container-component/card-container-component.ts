@@ -1,49 +1,34 @@
+import { Component, OnInit } from '@angular/core';
+import { CardEntrepriseComponent } from '../card-entreprise-component/card-entreprise-component';
+import { CardInterimaireComponent } from '../card-interimaire-component/card-interimaire-component';
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { CardEntrepriseComponent } from "../card-entreprise-component/card-entreprise-component";
-import { CardInterimaireComponent } from "../card-interimaire-component/card-interimaire-component";
+import { SqliteService, User } from '../services/sqlite.service';
 
 @Component({
-  selector: 'app-card-container-component',
-  imports: [CommonModule, CardEntrepriseComponent, CardInterimaireComponent],
-  templateUrl: './card-container-component.html',
-  styleUrl: './card-container-component.css'
+  selector: 'app-card-container',
+  standalone: true,
+  imports: [CardEntrepriseComponent, CardInterimaireComponent, CommonModule],
+  templateUrl: './card-container-component.html'
 })
-export class CardContainerComponent {
-
+export class CardContainerComponent implements OnInit {
+  donnees: User[] = [];
   filtre: 'tous' | 'entreprise' | 'interimaire' = 'tous';
+  loading = true;
 
-    entreprises = [
-    {
-      nom: 'TechCorp',
-      type: 'entreprise',
-      photo: 'assets/pexels-olly-774909.jpg',
-      email: 'contact@techcorp.com',
-      telephone: '0123456789',
-      adressePostal: '10 rue de Paris',
-      codePostal: '75001',
-      metier: 'Recrutement développeur',
-      description: 'Entreprise innovante dans la tech, spécialisée dans le développement web.'
-    }
-  ];
+  constructor(private sqliteService: SqliteService) {}
 
-  interims = [
-    {
-      nom: 'Durand',
-      prenom: 'Lucie',
-      type: 'interimaire',
-      photo: 'assets/pexels-olly-774909.jpg',
-      age: 28,
-      email: 'lucie.durand@email.com',
-      telephone: '0623456789',
-      adressePostal: '45 avenue Jean Jaurès',
-      codePostal: '69003',
-      metier: 'Assistante administrative',
-      description: 'Lucie a 5 ans d’expérience dans l’administration et la gestion de dossiers.'
-    }
-  ];
+  async ngOnInit() {
+    this.donnees = await this.sqliteService.getAllContacts();
+    this.loading = false;
+  }
 
-    filtrer(type: 'tous' | 'entreprise' | 'interimaire') {
+  filtrer(type: 'tous' | 'entreprise' | 'interimaire') {
     this.filtre = type;
   }
+
+  getFiltered() {
+    if (this.filtre === 'tous') return this.donnees;
+    return this.donnees.filter(d => d.type === this.filtre);
+  }
+  
 }
